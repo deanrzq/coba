@@ -1,10 +1,10 @@
-const chartGrowth = document.getElementById("chartGrowth");
+const chartCategory = document.getElementById("chartCategory");
 const filterMonthly = document.getElementById("filter_monthly");
-const filterGrowth = document.getElementById("filter_growth");
-let chartGrowthCanvas = null;
+const filterCategory = document.getElementById("filter_category");
+let chartCategoryCanvas = null;
 
 // update chart
-const updateChartGrowth = (labels, data, monthly_filter = null) => {
+const updateChartCategory = (labels, data, monthly_filter = null) => {
     let filter_labels = labels;
     let filter_data = data;
 
@@ -17,17 +17,17 @@ const updateChartGrowth = (labels, data, monthly_filter = null) => {
         filter_data = data;
     }
 
-    if (chartGrowthCanvas) {
-        chartGrowthCanvas.destroy();
+    if (chartCategoryCanvas) {
+        chartCategoryCanvas.destroy();
     }
 
-    chartGrowthCanvas = new Chart(chartGrowth, {
-        type: "line",
+    chartCategoryCanvas = new Chart(chartCategory, {
+        type: "bar",
         data: {
             labels: filter_labels,
             datasets: [
                 {
-                    label: 'Quantity and Revenue Growth',
+                    label: 'Pizza Sales based on Category',
                     data: filter_data,
                     borderWidth: 1
                 }
@@ -37,35 +37,35 @@ const updateChartGrowth = (labels, data, monthly_filter = null) => {
 }
 
 // menampilkan data chart
-const renderChartGrowth = (monthly_filter = null) => {
-    fetch('./json/revenue&quantitygrowth.json')
+const renderChartCategory = (monthly_filter = null) => {
+    fetch('./json/salesPizzabyCategory.json')
         .then(response => response.json())
         .then(response => {
             let datasets = response.datasets[0];
-            updateChartGrowth(datasets.labels, datasets.data, monthly_filter);
+            updateChartCategory(datasets.labels, datasets.data, monthly_filter);
         })
         .catch(err => {
             console.log(err);
         });
 };
 
-renderChartGrowth();
+renderChartCategory();
 
 // update chart berdasarkan filter bulanan
 filterMonthly.addEventListener("input", function () {
     let month = filterMonthly.value ? filterMonthly.value : null;
-    renderChartGrowth(month);
+    renderChartCategory(month);
 });
 
 // update chart berdasarkan kategori (Revenue/Quantity)
-filterGrowth.addEventListener("input", function () {
-    fetch('./json/revenue&quantitygrowth.json')
+filterCategory.addEventListener("input", function () {
+    fetch('./json/salesPizzabyCategory.json')
         .then(response => response.json())
         .then(response => {
-            let selectedCategory = filterGrowth.value;
+            let selectedCategory = filterCategory.value;
             let datasets = response.datasets[selectedCategory ? selectedCategory - 1 : 0];
             let month = filterMonthly.value ? filterMonthly.value : null;
-            updateChartGrowth(datasets.labels, datasets.data, month);
+            updateChartCategory(datasets.labels, datasets.data, month);
         })
         .catch(err => {
             console.log(err);
