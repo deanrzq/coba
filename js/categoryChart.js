@@ -22,7 +22,7 @@ const updateChartCategory = (labels, data, monthly_filter = null) => {
     }
 
     chartCategoryCanvas = new Chart(chartCategory, {
-        type: "bar",
+        type: "line",
         data: {
             labels: filter_labels,
             datasets: [
@@ -57,7 +57,7 @@ filterMonthly.addEventListener("input", function () {
     renderChartCategory(month);
 });
 
-// update chart berdasarkan kategori (Revenue/Quantity)
+// update chart berdasarkan kategori 
 filterCategory.addEventListener("input", function () {
     fetch('./json/salesPizzabyCategory.json')
         .then(response => response.json())
