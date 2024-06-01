@@ -1,5 +1,5 @@
 const chartGrowth = document.getElementById("chartGrowth");
-const filterMonthly = document.getElementById("filter_monthly");
+const filterMonthly = document.getElementById("filter_monthly"); 
 const filterGrowth = document.getElementById("filter_growth");
 let chartGrowthCanvas = null;
 
@@ -24,12 +24,25 @@ const updateChartGrowth = (labels, data, monthly_filter = null) => {
     chartGrowthCanvas = new Chart(chartGrowth, {
         type: "line",
         data: {
-            labels: filter_labels,
+            labels: [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+            ],
             datasets: [
                 {
                     label: 'Quantity and Revenue Growth',
                     data: filter_data,
-                    borderWidth: 1
+                    borderWidth: 2
                 }
             ],
         },

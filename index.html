@@ -95,7 +95,6 @@
 
         </div>
 
-        <div class="list-chart"></div>
 
           <div class="chart">
             <h2 class="quantity">Quantity and Revenue Growth</h2>
@@ -129,7 +128,20 @@
 
           <div class="chart">
             <h2 class="quantity">Pizza Sales based on Size</h2>
+
+            <div class="filter">
+              <select name="" id="filter_size">
+                <option value="">Semua Kategori</option>
+                <option value="1">XXL</option>
+                <option value="2">XL</option>
+                <option value="3">L</option>
+                <option value="4">M</option>
+                <option value="5">S</option>
+              </select>
+            </div>
+
             <canvas id="chartSizes"></canvas>
+            <script src="./js/sizeChart.js"></script>
           </div>
 
           <div class="chart">

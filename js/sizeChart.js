@@ -1,9 +1,9 @@
-const chartCategory = document.getElementById("chartCategory");
-const filterCategory = document.getElementById("filter_category");
-let chartCategoryCanvas = null;
+const chartSize = document.getElementById("chartSize");
+const filterSize = document.getElementById("filter_size");
+let chartSizeCanvas = null;
 
 // update chart
-const updateChartCategory = (labels, data, monthly_filter = null) => {
+const updateChartSize = (labels, data, monthly_filter = null) => {
     let filter_labels = labels;
     let filter_data = data;
 
@@ -16,17 +16,17 @@ const updateChartCategory = (labels, data, monthly_filter = null) => {
         filter_data = data;
     }
 
-    if (chartCategoryCanvas) {
-        chartCategoryCanvas.destroy();
+    if (chartSizeCanvas) {
+        chartSizeCanvas.destroy();
     }
 
-    chartCategoryCanvas = new Chart(chartCategory, {
+    chartSizeCanvas = new Chart(chartSize, {
         type: "bar",
         data: {
             labels: filter_labels,
             datasets: [
                 {
-                    label: 'Pizza Sales based on Category',
+                    label: 'Pizza Sales based on Size',
                     data: filter_data,
                     borderWidth: 2
                 }
@@ -36,35 +36,35 @@ const updateChartCategory = (labels, data, monthly_filter = null) => {
 }
 
 // menampilkan data chart
-const renderChartCategory = (monthly_filter = null) => {
-    fetch('./json/salesPizzabyCategory.json')
+const renderChartSize = (monthly_filter = null) => {
+    fetch('./json/salesPizzabySize.json')
         .then(response => response.json())
         .then(response => {
             let datasets = response.datasets[0];
-            updateChartCategory(datasets.labels, datasets.data, monthly_filter);
+            updateChartSize(datasets.labels, datasets.data, monthly_filter);
         })
         .catch(err => {
             console.log(err);
         });
 };
 
-renderChartCategory();
+renderChartSize();
 
 // update chart berdasarkan filter bulanan
 filterMonthly.addEventListener("input", function () {
     let month = filterMonthly.value ? filterMonthly.value : null;
-    renderChartCategory(month);
+    renderChartSize(month);
 });
 
 // update chart berdasarkan kategori 
-filterCategory.addEventListener("input", function () {
-    fetch('./json/salesPizzabyCategory.json')
+filterSize.addEventListener("input", function () {
+    fetch('./json/salesPizzabySize.json')
         .then(response => response.json())
         .then(response => {
-            let selectedCategory = filterCategory.value;
-            let datasets = response.datasets[selectedCategory ? selectedCategory - 1 : 0];
+            let selectedSize = filterSize.value;
+            let datasets = response.datasets[selectedSize ? selectedSize - 1 : 0];
             let month = filterMonthly.value ? filterMonthly.value : null;
-            updateChartCategory(datasets.labels, datasets.data, month);
+            updateChartSize(datasets.labels, datasets.data, month);
         })
         .catch(err => {
             console.log(err);
