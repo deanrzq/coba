@@ -1,72 +1,84 @@
-const chartSize = document.getElementById("chartSize");
+const chartSizes = document.getElementById("chartSizes");
 const filterSize = document.getElementById("filter_size");
-let chartSizeCanvas = null;
+let chartSizesCanvas = null;
 
-// update chart
-const updateChartSize = (labels, data, monthly_filter = null) => {
-    let filter_labels = labels;
-    let filter_data = data;
+// Update chart
+const updateChartSizes = (labels, datasets, monthly_filter = null) => {
+    const filteredDatasets = datasets.map(dataset => ({
+        ...dataset,
+        data: getFilteredData(dataset.data, monthly_filter)
+    }));
 
-    if (monthly_filter !== null) {
-        let index = parseInt(monthly_filter) - 1;
-        filter_labels = [labels[index]];
-        filter_data = [data[index]];
-    } else {
-        filter_labels = labels;
-        filter_data = data;
+    if (chartSizesCanvas) {
+        chartSizesCanvas.destroy();
     }
 
-    if (chartSizeCanvas) {
-        chartSizeCanvas.destroy();
-    }
-
-    chartSizeCanvas = new Chart(chartSize, {
+    chartSizesCanvas = new Chart(chartSizes, {
         type: "bar",
         data: {
-            labels: filter_labels,
-            datasets: [
-                {
-                    label: 'Pizza Sales based on Size',
-                    data: filter_data,
-                    borderWidth: 2
-                }
-            ],
+            labels: labels,
+            datasets: filteredDatasets
         },
     });
 }
 
-// menampilkan data chart
-const renderChartSize = (monthly_filter = null) => {
+// Render chart with optional monthly filter
+const renderChartSizes = (monthly_filter = null) => {
     fetch('./json/salesPizzabySize.json')
         .then(response => response.json())
         .then(response => {
-            let datasets = response.datasets[0];
-            updateChartSize(datasets.labels, datasets.data, monthly_filter);
+            const allData = response.datasets;
+            const selectedSize = filterSize.value;
+            
+            let datasetsToRender;
+            if (selectedSize === "0") {
+                // Display all sizes
+                datasetsToRender = allData.map(dataset => ({
+                    label: dataset.label,
+                    data: dataset.data,
+                    borderWidth: 2,
+                    borderColor: getRandomColor(),
+                    backgroundColor: getRandomColor(0.5),
+                    fill: true,
+                }));
+            } else {
+                datasetsToRender = [
+                    {
+                        label: allData[parseInt(selectedSize) - 1].label,
+                        data: allData[parseInt(selectedSize) - 1].data,
+                        borderWidth: 2,
+                        borderColor: "rgb(255, 1, 1)",
+                        backgroundColor: "rgba(255, 1, 1, 0.5)",
+                        fill: true,
+                    }
+                ];
+            }
+
+            updateChartSizes(monthLabels, datasetsToRender, monthly_filter);
         })
         .catch(err => {
             console.log(err);
         });
 };
 
-renderChartSize();
+renderChartSizes();
 
-// update chart berdasarkan filter bulanan
+// Update chart based on monthly filter
 filterMonthly.addEventListener("input", function () {
     let month = filterMonthly.value ? filterMonthly.value : null;
-    renderChartSize(month);
+    renderChartSizes(month);
 });
 
-// update chart berdasarkan kategori 
+// Update chart based on size filter
 filterSize.addEventListener("input", function () {
-    fetch('./json/salesPizzabySize.json')
-        .then(response => response.json())
-        .then(response => {
-            let selectedSize = filterSize.value;
-            let datasets = response.datasets[selectedSize ? selectedSize - 1 : 0];
-            let month = filterMonthly.value ? filterMonthly.value : null;
-            updateChartSize(datasets.labels, datasets.data, month);
-        })
-        .catch(err => {
-            console.log(err);
-        });
+    let month = filterMonthly.value ? filterMonthly.value : null;
+    renderChartSizes(month);
 });
+
+// Helper function to generate random colors for datasets
+function getRandomColor(alpha = 1) {
+    const r = Math.floor(Math.random() * 255);
+    const g = Math.floor(Math.random() * 255);
+    const b = Math.floor(Math.random() * 255);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
